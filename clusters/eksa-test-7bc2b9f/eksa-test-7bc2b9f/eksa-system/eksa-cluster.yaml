@@ -1,0 +1,139 @@
+apiVersion: anywhere.eks.amazonaws.com/v1alpha1
+kind: Cluster
+metadata:
+  name: eksa-test-7bc2b9f
+  namespace: default
+spec:
+  bundlesRef: null
+  clusterNetwork:
+    cniConfig:
+      cilium: {}
+    pods:
+      cidrBlocks:
+      - 192.168.0.0/16
+    services:
+      cidrBlocks:
+      - 10.96.0.0/12
+  controlPlaneConfiguration:
+    count: 1
+    endpoint:
+      host: 195.17.134.170
+    machineGroupRef:
+      kind: VSphereMachineConfig
+      name: eksa-test-7bc2b9f-cp
+  datacenterRef:
+    kind: VSphereDatacenterConfig
+    name: eksa-test-7bc2b9f
+  eksaVersion: v0.0.0-dev-release-0.17+build.107
+  externalEtcdConfiguration:
+    count: 1
+    machineGroupRef:
+      kind: VSphereMachineConfig
+      name: eksa-test-7bc2b9f-etcd
+  gitOpsRef:
+    kind: FluxConfig
+    name: eksa-test
+  kubernetesVersion: "1.27"
+  managementCluster:
+    name: eksa-test-7bc2b9f
+  workerNodeGroupConfigurations:
+  - count: 1
+    machineGroupRef:
+      kind: VSphereMachineConfig
+      name: eksa-test-7bc2b9f
+    name: md-0
+
+---
+apiVersion: anywhere.eks.amazonaws.com/v1alpha1
+kind: VSphereDatacenterConfig
+metadata:
+  name: eksa-test-7bc2b9f
+  namespace: default
+spec:
+  datacenter: SDDC-Datacenter
+  insecure: false
+  network: /SDDC-Datacenter/network/sddc-cgw-network-4
+  server: vcenter.sddc-44-239-186-141.vmwarevmc.com
+  thumbprint: ""
+
+---
+apiVersion: anywhere.eks.amazonaws.com/v1alpha1
+kind: VSphereMachineConfig
+metadata:
+  annotations:
+    anywhere.eks.amazonaws.com/etcd: "true"
+  name: eksa-test-7bc2b9f-etcd
+  namespace: default
+spec:
+  cloneMode: fullClone
+  datastore: /SDDC-Datacenter/datastore/WorkloadDatastore
+  diskGiB: 25
+  folder: /SDDC-Datacenter/vm/capv/ahreeh/
+  memoryMiB: 8192
+  numCPUs: 2
+  osFamily: ubuntu
+  resourcePool: /SDDC-Datacenter/host/Cluster-1/Resources/Compute-ResourcePool
+  template: /SDDC-Datacenter/vm/Templates/ubuntu-kube-v1-27
+  users:
+  - name: ec2-user
+    sshAuthorizedKeys:
+    - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDFho1Zds1hbtnJ9eSz30PdYJpV9sbeRDK1Kc2yWWm3UaiZccISReA2m3Smv8cclNzLlRH1znc3z6YHZBUX8AipPj+Ocb+avnWALErQ34M7vA8Gp5HvyR1+qmqXfEf7NbjjyMwzxRxI8BgMdOBwOlR0mQFVDiQuUr6nyTB67Rr0Ib8Zt9d3Ur5ZDekvUYQq5Y/msaaQmfvz1zZNDs0eoQ00IPNMULPACdTkIWuFPIk68cAkNfO29Gn+4a/7UbO0gnoj4995YR+jMHYFRN1mtMQMPfxy6sLz6VtTLC3tFqIr6o5p2lVt2Y+FCaMk+54jn7B8v6GMFnf4MALr+GHMsP7iywsnh1fZliqB5dqhtPwmKZQRil3orA1Oaa1QCS7sy3T6AuU5UVgSaCC1S0Dv95EKaKpuQ6hePtS2XAEENcDHcOhmGNa0kbFe193MJFXgpcuJT/ito+snYsna4hseATvFBWhMK5TnAv+ngFZrueFw4vEP7AiTr/vK6rVBMmjX631oDMKdCbEH3R4qXosCGm/eiwEV+EnTrxUp1eoMLbEcbk/HxhSVdyDpTdaHSFRzhKb9IBdG3n00I1NuU39CY9T2jt7rhviMuPWooB8g9jsBoGC6enAYg2Lyg5rIuAvlXpssRqI15yfWOSWO9uckKHEagMPvDuxhqI14CHtfLoeEmw==
+
+---
+apiVersion: anywhere.eks.amazonaws.com/v1alpha1
+kind: VSphereMachineConfig
+metadata:
+  annotations:
+    anywhere.eks.amazonaws.com/control-plane: "true"
+  name: eksa-test-7bc2b9f-cp
+  namespace: default
+spec:
+  cloneMode: fullClone
+  datastore: /SDDC-Datacenter/datastore/WorkloadDatastore
+  diskGiB: 25
+  folder: /SDDC-Datacenter/vm/capv/ahreeh/
+  memoryMiB: 8192
+  numCPUs: 2
+  osFamily: ubuntu
+  resourcePool: /SDDC-Datacenter/host/Cluster-1/Resources/Compute-ResourcePool
+  template: /SDDC-Datacenter/vm/Templates/ubuntu-kube-v1-27
+  users:
+  - name: ec2-user
+    sshAuthorizedKeys:
+    - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDFho1Zds1hbtnJ9eSz30PdYJpV9sbeRDK1Kc2yWWm3UaiZccISReA2m3Smv8cclNzLlRH1znc3z6YHZBUX8AipPj+Ocb+avnWALErQ34M7vA8Gp5HvyR1+qmqXfEf7NbjjyMwzxRxI8BgMdOBwOlR0mQFVDiQuUr6nyTB67Rr0Ib8Zt9d3Ur5ZDekvUYQq5Y/msaaQmfvz1zZNDs0eoQ00IPNMULPACdTkIWuFPIk68cAkNfO29Gn+4a/7UbO0gnoj4995YR+jMHYFRN1mtMQMPfxy6sLz6VtTLC3tFqIr6o5p2lVt2Y+FCaMk+54jn7B8v6GMFnf4MALr+GHMsP7iywsnh1fZliqB5dqhtPwmKZQRil3orA1Oaa1QCS7sy3T6AuU5UVgSaCC1S0Dv95EKaKpuQ6hePtS2XAEENcDHcOhmGNa0kbFe193MJFXgpcuJT/ito+snYsna4hseATvFBWhMK5TnAv+ngFZrueFw4vEP7AiTr/vK6rVBMmjX631oDMKdCbEH3R4qXosCGm/eiwEV+EnTrxUp1eoMLbEcbk/HxhSVdyDpTdaHSFRzhKb9IBdG3n00I1NuU39CY9T2jt7rhviMuPWooB8g9jsBoGC6enAYg2Lyg5rIuAvlXpssRqI15yfWOSWO9uckKHEagMPvDuxhqI14CHtfLoeEmw==
+
+---
+apiVersion: anywhere.eks.amazonaws.com/v1alpha1
+kind: VSphereMachineConfig
+metadata:
+  name: eksa-test-7bc2b9f
+  namespace: default
+spec:
+  cloneMode: fullClone
+  datastore: /SDDC-Datacenter/datastore/WorkloadDatastore
+  diskGiB: 25
+  folder: /SDDC-Datacenter/vm/capv/ahreeh/
+  memoryMiB: 8192
+  numCPUs: 2
+  osFamily: ubuntu
+  resourcePool: /SDDC-Datacenter/host/Cluster-1/Resources/Compute-ResourcePool
+  template: /SDDC-Datacenter/vm/Templates/ubuntu-kube-v1-27
+  users:
+  - name: ec2-user
+    sshAuthorizedKeys:
+    - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDFho1Zds1hbtnJ9eSz30PdYJpV9sbeRDK1Kc2yWWm3UaiZccISReA2m3Smv8cclNzLlRH1znc3z6YHZBUX8AipPj+Ocb+avnWALErQ34M7vA8Gp5HvyR1+qmqXfEf7NbjjyMwzxRxI8BgMdOBwOlR0mQFVDiQuUr6nyTB67Rr0Ib8Zt9d3Ur5ZDekvUYQq5Y/msaaQmfvz1zZNDs0eoQ00IPNMULPACdTkIWuFPIk68cAkNfO29Gn+4a/7UbO0gnoj4995YR+jMHYFRN1mtMQMPfxy6sLz6VtTLC3tFqIr6o5p2lVt2Y+FCaMk+54jn7B8v6GMFnf4MALr+GHMsP7iywsnh1fZliqB5dqhtPwmKZQRil3orA1Oaa1QCS7sy3T6AuU5UVgSaCC1S0Dv95EKaKpuQ6hePtS2XAEENcDHcOhmGNa0kbFe193MJFXgpcuJT/ito+snYsna4hseATvFBWhMK5TnAv+ngFZrueFw4vEP7AiTr/vK6rVBMmjX631oDMKdCbEH3R4qXosCGm/eiwEV+EnTrxUp1eoMLbEcbk/HxhSVdyDpTdaHSFRzhKb9IBdG3n00I1NuU39CY9T2jt7rhviMuPWooB8g9jsBoGC6enAYg2Lyg5rIuAvlXpssRqI15yfWOSWO9uckKHEagMPvDuxhqI14CHtfLoeEmw==
+
+---
+apiVersion: anywhere.eks.amazonaws.com/v1alpha1
+kind: FluxConfig
+metadata:
+  name: eksa-test
+  namespace: default
+spec:
+  branch: main
+  clusterConfigPath: clusters/eksa-test-7bc2b9f
+  git:
+    repositoryUrl: ssh://git@github.com/ahreehong/gitops-cluster.git
+  systemNamespace: default
+
+---
